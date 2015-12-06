@@ -2,7 +2,7 @@
 
 An attempt at a GamePad.
 
-At the moment, Im only shotting for 2 directional pad-like gamepad.
+At the moment, Im only shooting for 2 directional pad-like gamepad.
 
 The circuit is the same for all buttons.
 
