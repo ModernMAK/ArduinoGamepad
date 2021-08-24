@@ -1,4 +1,7 @@
+#include <HID.h>
 #include "DirtyValue.cpp"
+#include <SoftwareSerial.h>
+#include "HID-Project.h"
 
 /*
  * 
@@ -11,7 +14,8 @@ const int
   A_BUTTON_PIN = 2,
   B_BUTTON_PIN = 3,
   X_BUTTON_PIN = 4,
-  Y_BUTTON_PIN = 5;
+  Y_BUTTON_PIN = 5,
+  LCD_PIN = 6;
   
 DirtyValue<bool> 
   aButton = NULL,
@@ -19,12 +23,16 @@ DirtyValue<bool>
   xButton = NULL,
   yButton = NULL;
 
+//Gamepad myGamepad;
+
+SoftwareSerial lcdScreen = SoftwareSerial(255,LCD_PIN);
 
 void setup() {
   Serial.begin(9600);
   while(!Serial){
     ;
   }
+  lcdScreen.begin(9600);
   aButton = {false};
   bButton = {false};
   xButton = {false};
@@ -33,11 +41,14 @@ void setup() {
   pinMode(B_BUTTON_PIN,INPUT);
   pinMode(X_BUTTON_PIN,INPUT);
   pinMode(Y_BUTTON_PIN,INPUT);
+  pinMode(LCD_PIN,OUTPUT);  
+  lcdScreen.write(17);
 }
 
 void loop() {
     updateState();
     serializeState();
+    updateLcd();
     delay(10);
 }
 
@@ -46,13 +57,34 @@ void serialEvent(){
     deserializeState();
   }
 }
-
 void updateState(){
   aButton.setValue((digitalRead(A_BUTTON_PIN) == 0 ? false : true));
   bButton.setValue((digitalRead(B_BUTTON_PIN) == 0 ? false : true));  
   xButton.setValue((digitalRead(X_BUTTON_PIN) == 0 ? false : true));  
   yButton.setValue((digitalRead(Y_BUTTON_PIN) == 0 ? false : true));  
 }
+void updateLcd(){
+  if(aButton.getDirty() || bButton.getDirty() || xButton.getDirty() || yButton.getDirty()){
+
+    lcdScreen.write(12);
+    
+    if(aButton.getValue()){
+      lcdScreen.print("A");  
+    }
+    if(bButton.getValue()){
+      lcdScreen.print("B");  
+    }
+    if(xButton.getValue()){
+      lcdScreen.print("X");  
+    }
+    if(yButton.getValue()){
+      lcdScreen.print("Y");  
+    }
+  }
+  else{
+  }
+}
+
 void serializeState(){
   int dirtyBits = 0;
   bool wasBitSet = false;
