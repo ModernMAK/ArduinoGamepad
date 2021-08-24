@@ -1,43 +1,46 @@
+// 
+// 
+// 
+
+#include "DirtyValue.h"
 
 template<typename T>
-class  DirtyValue{
-  public:
-    DirtyValue(T initialValue){
-      myValue = initialValue;
-      isDirty = true;
-      hasSerialized = false; 
-    }
-  
-  private:
-    T 
-      myValue;
-    bool 
-      isDirty,
-      hasSerialized;
+DirtyValue<T>::DirtyValue() {
+}
+template<typename T>
+DirtyValue<T>::DirtyValue(T initial) {
+	myValue = initial;
+}
 
-  public:
-    void setValue(T value){
-      isDirty = isDirty || (myValue != value);
-      hasSerialized = (myValue == value && hasSerialized);
-      myValue = value;  
-    }
-    T getValue(){
-      return myValue;  
-    }
-    bool getDirty(){
-      return isDirty;
-    }
-    void cleanDirty(){
-      isDirty = false;
-      hasSerialized = false;
-    }
-    bool getSerialized(){
-      return hasSerialized;
-    }
-    void setSerialized(){
-      hasSerialized = true;
-    }
-    bool shouldSerialize(){
-      return !getSerialized() && getDirty();
-    }
-};
+template<typename T>
+T DirtyValue<T>::getValue() {
+	return myValue;
+}
+
+template<typename T>
+void DirtyValue<T>::setValue(T nValue) {
+	isDirty = isDirty || (nValue != myValue);
+	hasSerialized = (myValue == nValue && hasSerialized);
+	myValue = nValue;
+}
+
+template<typename T>
+bool DirtyValue<T>::getDirty() {
+	return 	isDirty;
+
+}
+
+template<typename T>
+void DirtyValue<T>::setDirty(bool dirty) {
+	isDirty = dirty;
+}
+
+template<typename T>
+bool DirtyValue<T>::getSerialized() {
+	return hasSerialized;
+}
+
+template<typename T>
+void DirtyValue<T>::setSerialized(bool serialized) {
+	hasSerialized = serialized;
+}
